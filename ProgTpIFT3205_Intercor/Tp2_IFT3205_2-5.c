@@ -1,6 +1,7 @@
 /*------------------------------------------------------*/
-/* Prog    : Tp2_IFT3205-2-4.c                          */
-/* Auteur  :                                            */
+/* Prog    : Tp2_IFT3205-2-5.c                          */
+/* Auteur  :  Loïc Daudé Mondet (20243814)  Adel Abdeladim (20127626) */
+/* Emails  :  loic.daude.mondet@umontreal.ca   adel.abdeladim@umontreal.ca  */
 /* Date    : --/--/2010                                 */
 /* version :                                            */
 /* langage : C                                          */
@@ -261,52 +262,69 @@ int main(int argc,char **argv)
 
 
 
-    float** MatriceImgFMSQUARED=fmatrix_allocate_2d(length, width);
     float** MatriceImgFM=fmatrix_allocate_2d(length, width);
+    float** MatriceImgFSQUAREDR=fmatrix_allocate_2d(length, width);
+    float** MatriceImgFSQUAREDI=fmatrix_allocate_2d(length, width);
     float** MatriceImgCI=fmatrix_allocate_2d(length, width);
     float** MatriceImgCR=fmatrix_allocate_2d(length, width);
-    float** MatriceDecalR=fmatrix_allocate_2d(length, width);
-    float** MatriceDecalI=fmatrix_allocate_2d(length, width);
+    float** MatriceDiracR=fmatrix_allocate_2d(length, width);
+    float** MatriceDiracI=fmatrix_allocate_2d(length, width);
 
     for(i=0;i<length;i++) {
         for (j = 0; j < width; j++) {
-            MatriceImgFMSQUARED[i][j] = 0.0;
             MatriceImgFM[i][j] = 0.0;
+            MatriceImgFSQUAREDR[i][j] = 0.0;
+            MatriceImgFSQUAREDI[i][j] = 0.0;
             MatriceImgCI[i][j] = 0.0;
             MatriceImgCR[i][j] = 0.0;
             MatriceImgI2[i][j] = 0.0;
             MatriceImgI1[i][j] = 0.0;
-            MatriceDecalR[i][j] = 0.0;
-            MatriceDecalI[i][j] = 0.0;
+            MatriceDiracR[i][j] = 0.0;
+            MatriceDiracI[i][j] = 0.0;
         }
     }
 
     FFTDD(MatriceImgGRotate, MatriceImgI2, length, width);
     FFTDD(MatriceImg1, MatriceImgI1, length, width);
-    Mod(MatriceImgFM, MatriceImg1, MatriceImgI1, length, width);
 
+    /*Module*/
+    //Mod(MatriceImgFM,MatriceImg1,MatriceImgI1,length,width);
 
-    for(i=0;i<length;i++) {
-        for (j = 0; j < width; j++) {
-            MatriceDecalR[i][j] = MatriceImgCR[i][j]/MatriceImgFMSQUARED[i][j];
-            MatriceDecalI[i][j]= MatriceImgCI[i][j]/MatriceImgFMSQUARED[i][j];
-        }
-    }
-
-    IFFTDD(MatriceDecalR, MatriceDecalI, length, width);
-    //Recal(MatriceDecalR,length,width);
-    //CenterImg2(&MatriceDecalR, length, width);
+    SquareMatrix(MatriceImgFSQUAREDR, MatriceImgFSQUAREDI, MatriceImg1, MatriceImgI1, length, width);
+    Mod(MatriceImgFM,MatriceImgFSQUAREDR,MatriceImgFSQUAREDI,length,width);
+    MultMatrix(MatriceImgCR, MatriceImgCI, MatriceImgGRotate, MatriceImgI2, MatriceImg1, MatriceImgI1, length, width);
 
     for(i=0;i<length;i++) {
         for (j = 0; j < width; j++) {
-            if (MatriceDecalR[i][j]>0) printf("i=%d;j=%d\n", i, j);
+            MatriceDiracR[i][j] = MatriceImgCR[i][j]/MatriceImgFM[i][j];
+            MatriceDiracI[i][j] = MatriceImgCI[i][j]/MatriceImgFM[i][j];
         }
     }
+
+//    for(i=0;i<length;i++) {
+//        for (j = 0; j < width; j++) {
+//            MatriceDiracR[i][j] = MatriceImgCR[i][j]/powf(MatriceImgFM[i][j], 2);
+//            MatriceDiracI[i][j] = MatriceImgCI[i][j]/powf(MatriceImgFM[i][j], 2);
+//        }
+//    }
+
+
+    IFFTDD(MatriceDiracR, MatriceDiracI, length, width);
+    //Recal(MatriceDiracR,length,width);
+    //CenterImg2(&MatriceDiracR, length, width);
+
+    for (int i=0; i<length; i++) {
+        for (int j=0; j<width; j++) {
+            if (MatriceDiracR[i][j]>0) printf("i:%d, i:%d\n", i, j);
+        }
+
+    }
+
 
 
 
     //Sauvegarde
-    SaveImagePgm(NAME_IMG_OUT,MatriceDecalR,length,width);
+    SaveImagePgm(NAME_IMG_OUT,MatriceDiracR,length,width);
 
     //Commande systeme: VISU
     strcpy(BufSystVisuImg,NAME_VISUALISER);
@@ -314,6 +332,7 @@ int main(int argc,char **argv)
     strcat(BufSystVisuImg,".pgm&");
     printf(" %s",BufSystVisuImg);
     system(BufSystVisuImg);
+
     strcpy(BufSystVisuImg,NAME_VISUALISER);
     strcat(BufSystVisuImg,NAME_IMG_IN1);
     strcat(BufSystVisuImg,".pgm&");

@@ -1,6 +1,7 @@
 /*------------------------------------------------------*/
-/* Prog    : Tp2_IFT3205-2-4.c                          */
-/* Auteur  :                                            */
+/* Prog    : Tp2_IFT3205-2-2.c                          */
+/* Auteur  :  Loïc Daudé Mondet (20243814)  Adel Abdeladim (20127626) */
+/* Emails  :  loic.daude.mondet@umontreal.ca   adel.abdeladim@umontreal.ca  */
 /* Date    : --/--/2010                                 */
 /* version :                                            */ 
 /* langage : C                                          */
@@ -71,7 +72,7 @@ void rotateImg(float ** MatriceImg, float ** MatriceImgRotate, int length, int w
 
             int x_r = roundf((i-center_length) * cosf(Theta) + (j-center_width) * sinf(Theta) + center_length);
             int y_r = roundf(-(i-center_length) * sinf(Theta) + (j-center_width) * cosf(Theta) + center_width);
-            if (y_r<0 || y_r>=length || x_r<0 || x_r>=length) MatriceImgRotate[i][j]=0;
+            if (y_r<0 || y_r>=width || x_r<0 || x_r>=length) MatriceImgRotate[i][j]=0;
             else MatriceImgRotate[i][j]=MatriceImg[x_r][y_r];
         }
 

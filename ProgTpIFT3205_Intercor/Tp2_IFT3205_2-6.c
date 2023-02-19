@@ -1,6 +1,7 @@
 /*------------------------------------------------------*/
-/* Prog    : Tp2_IFT3205-2-4.c                          */
-/* Auteur  :                                            */
+/* Prog    : Tp2_IFT3205-2-6.c                          */
+/* Auteur  :  Loïc Daudé Mondet (20243814)  Adel Abdeladim (20127626) */
+/* Emails  :  loic.daude.mondet@umontreal.ca   adel.abdeladim@umontreal.ca  */
 /* Date    : --/--/2010                                 */
 /* version :                                            */
 /* langage : C                                          */
